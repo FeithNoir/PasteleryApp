@@ -1,59 +1,45 @@
-# PasteleryApp
+# PasteleryApp 🍰
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 21.1.4.
+A modern, high-performance Angular application for managing a bakery shop. Built with latest Angular features and a sleek Neobrutalist design.
 
-## Development server
+## 🚀 Technologies
 
-To start a local development server, run:
+- **Framework**: Angular 21
+- **State Management**: Angular Signals
+- **Styling**: Vanilla CSS (Neobrutalist Aesthetic)
+- **Icons & UI**: SweetAlert2
+- **Language**: TypeScript
 
-```bash
-ng serve
-```
+## 🏗️ Architecture
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+The project follows a modular and scalable directory structure:
 
-## Code scaffolding
+### `/core`
+The backbone of the application.
+- **Services**: Business logic and data management (Inventory, Cakes, Cart, Auth).
+- **Interfaces**: TypeScript definitions for consistent data models.
+- **Guards**: Route protection and navigation logic.
+- **Data**: Static mock data and configuration.
 
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
+### `/pages`
+Feature-based page components.
+- **Home**: Product catalog and featured cakes.
+- **Inventory**: Management of ingredients and stock.
+- **Recipes**: Detailed recipes for production.
+- **Profile & Auth**: User management and authentication.
 
-```bash
-ng generate component component-name
-```
+### `/shared`
+Reusable UI components across the app.
+- **Card**: Standardized presentation for cakes.
+- **Modal**: Flexible popup system.
+- **Layout**: Main structure including sidebar and header.
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+## ✨ Future Roadmap
 
-```bash
-ng generate --help
-```
+- **Backend Integration**: Replace mock services with a real RESTful API.
+- **Authentication**: JWT-based login and role-based access control.
+- **Dashboard**: Advanced analytics for sales and inventory optimization.
+- **PWA Support**: Offline capabilities for warehouse management.
 
-## Building
-
-To build the project run:
-
-```bash
-ng build
-```
-
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
-
-## Running unit tests
-
-To execute unit tests with the [Vitest](https://vitest.dev/) test runner, use the following command:
-
-```bash
-ng test
-```
-
-## Running end-to-end tests
-
-For end-to-end (e2e) testing, run:
-
-```bash
-ng e2e
-```
-
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
-
-## Additional Resources
-
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+---
+Developed with ❤️ by the Bakery Team.

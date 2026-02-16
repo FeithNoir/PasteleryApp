@@ -1,0 +1,17 @@
+<div class="recipes-container">
+    <h1>Recetas de la Casa</h1>
+    <p class="subtitle">Aprende los secretos de nuestros maestros panaderos.</p>
+
+    <div class="recipes-grid">
+        @for (recipe of recipes; track recipe.title) {
+        <div class="recipe-card">
+            <h3>{{ recipe.title }}</h3>
+            <div class="recipe-meta">
+                <span>Dificultad: {{ recipe.difficulty }}</span>
+                <span>Tiempo: {{ recipe.time }}</span>
+            </div>
+            <button class="secondary-button">Ver Receta Completa</button>
+        </div>
+        }
+    </div>
+</div>

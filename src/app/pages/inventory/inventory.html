@@ -1,0 +1,128 @@
+<div class="inventory-container">
+  <header class="inventory-header">
+    <h1>Inventario</h1>
+    @if (!isFormVisible()) {
+    <button (click)="addIngredient()" class="primary-button">
+      <span>+</span> Añadir Ingrediente
+    </button>
+    } @else {
+    <button (click)="isFormVisible.set(false)" class="secondary-button">
+      Volver al Listado
+    </button>
+    }
+  </header>
+
+  <div class="inventory-view">
+    @if (!isFormVisible()) {
+    <div class="table-card">
+      @if (loading()) {
+      <div class="loading-state">Cargando ingredientes...</div>
+      } @else {
+      <div class="table-wrapper">
+        <table class="neobrutalist-table">
+          <thead>
+            <tr>
+              <th>Nombre</th>
+              <th>Marca</th>
+              <th>Precio</th>
+              <th>Estado</th>
+              <th>Caducidad</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (ingredient of ingredients(); track ingredient.id) {
+            <tr>
+              <td><strong>{{ ingredient.name }}</strong></td>
+              <td>{{ ingredient.brand || '---' }}</td>
+              <td class="price">{{ ingredient.price | currency:'EUR' }}</td>
+              <td>
+                <span class="status-badge" [attr.data-status]="ingredient.status">
+                  {{ ingredient.status }}
+                </span>
+              </td>
+              <td>{{ ingredient.expiryDate | date:'shortDate' }}</td>
+              <td class="actions">
+                <button (click)="editIngredient(ingredient)" class="icon-btn edit">✏️</button>
+                <button (click)="deleteIngredient(ingredient.id)" class="icon-btn delete">🗑️</button>
+              </td>
+            </tr>
+            } @empty {
+            <tr>
+              <td colspan="6" class="empty-msg">No hay ingredientes registrados.</td>
+            </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+      }
+    </div>
+    } @else {
+    <!-- Formulario para añadir/editar ingrediente -->
+    <div class="form-wrapper">
+      <div class="modal-overlay" (click)="closeForm()">
+        <div class="modal-content" (click)="$event.stopPropagation()">
+          <header class="modal-header">
+            <h2>{{ editingIngredient() ? 'Editar Ingrediente' : 'Añadir Ingrediente' }}</h2>
+            <button class="close-button" (click)="closeForm()">&times;</button>
+          </header>
+
+          <form [formGroup]="ingredientForm" (ngSubmit)="saveIngredient(ingredientForm.value)">
+            <div class="form-grid">
+              <!-- Name -->
+              <div class="form-field">
+                <label for="name">Nombre</label>
+                <input id="name" formControlName="name" placeholder="Ej: Harina de trigo">
+              </div>
+
+              <!-- Brand -->
+              <div class="form-field">
+                <label for="brand">Marca</label>
+                <input id="brand" formControlName="brand" placeholder="Ej: Gallina Blanca">
+              </div>
+
+              <!-- Price -->
+              <div class="form-field">
+                <label for="price">Precio</label>
+                <input id="price" type="number" formControlName="price">
+              </div>
+
+              <!-- Unit -->
+              <div class="form-field">
+                <label for="unit">Unidad</label>
+                <select id="unit" formControlName="unit">
+                  <option value="kg">Kg</option>
+                  <option value="litro">Litro</option>
+                  <option value="unidad">Unidad</option>
+                </select>
+              </div>
+
+              <!-- Expiry Date -->
+              <div class="form-field">
+                <label for="expiryDate">Fecha de Caducidad</label>
+                <input id="expiryDate" type="date" formControlName="expiryDate">
+              </div>
+
+              <!-- Status -->
+              <div class="form-field">
+                <label for="status">Estado</label>
+                <select id="status" formControlName="status">
+                  <option value="sin empezar">Sin Empezar</option>
+                  <option value="abierto">Abierto</option>
+                  <option value="agotado">Agotado</option>
+                </select>
+              </div>
+            </div>
+
+            <footer class="modal-footer">
+              <button type="button" class="secondary-button" (click)="closeForm()">Cancelar</button>
+              <button type="submit" class="primary-button" [disabled]="ingredientForm.invalid">Guardar</button>
+            </footer>
+          </form>
+        </div>
+      </div>
+
+    </div>
+    }
+  </div>
+</div>
