@@ -4,18 +4,20 @@
   <p>Tu carrito está vacío.</p>
   } @else {
   <div class="cart-items">
-    @for (item of cartItems(); track item.cake.id) {
+    @for (item of cartItems(); track item.recipe.id) {
     <div class="cart-item">
       <div class="item-info">
-        <img [src]="item.cake.imageUrl" [alt]="item.cake.name" />
+        @if (item.recipe.imageUrl) {
+          <img [src]="item.recipe.imageUrl" [alt]="item.recipe.name" />
+        }
         <div>
-          <h3>{{ item.cake.name }}</h3>
-          <p>{{ item.cake.price | currency:'USD' }}</p>
+          <h3>{{ item.recipe.name }}</h3>
+          <p>{{ item.recipe.suggestedPrice | currency:'USD' }}</p>
         </div>
       </div>
       <div class="item-controls">
-        <input type="number" [value]="item.quantity" (change)="updateQuantity(item.cake.id, $event)" min="1" />
-        <button (click)="removeFromCart(item.cake.id)">Eliminar</button>
+        <input type="number" [value]="item.quantity" (change)="updateQuantity(item.recipe.id, $event)" min="1" />
+        <button (click)="removeFromCart(item.recipe.id)">Eliminar</button>
       </div>
     </div>
     }

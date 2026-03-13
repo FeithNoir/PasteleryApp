@@ -1,7 +1,7 @@
 import { CommonModule, formatDate } from '@angular/common';
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject, OnInit, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Ingredient, IngredientStatus, IngredientUnit } from '@core/interfaces/ingredient.interface';
+import { InventoryItemDto } from '@core/interfaces/inventory-item.interface';
 import { InventoryService } from '@core/services/inventory.service';
 
 @Component({
@@ -10,83 +10,87 @@ import { InventoryService } from '@core/services/inventory.service';
   templateUrl: './inventory.html',
   styleUrl: './inventory.css',
 })
-export class Inventory {
+export class Inventory implements OnInit {
   private readonly inventoryService = inject(InventoryService);
   private readonly fb = inject(FormBuilder);
 
   public ingredients = this.inventoryService.ingredients;
   public loading = this.inventoryService.loading;
   public isFormVisible = signal(false);
-  public editingIngredient = signal<Ingredient | null>(null);
+  public editingItem = signal<InventoryItemDto | null>(null);
 
-  public ingredientForm = this.fb.group({
-    id: [null as string | null],
-    name: ['', Validators.required],
-    brand: [''],
-    status: ['sin empezar' as IngredientStatus, Validators.required],
-    price: [0, [Validators.required, Validators.min(0)]],
-    unit: ['kg' as IngredientUnit, Validators.required],
-    expiryDate: ['', Validators.required],
+  public inventoryForm = this.fb.group({
+    id: ['' as string],
+    ingredientId: ['', Validators.required],
+    quantity: [0, [Validators.required, Validators.min(0)]],
+    unit: ['kg', Validators.required],
+    location: [''],
   });
 
-  ngOnInit() { }
+  ngOnInit() {
+    this.inventoryService.loadIngredients();
+  }
 
-  addIngredient() {
-    this.editingIngredient.set(null);
-    this.ingredientForm.reset({
-      status: 'sin empezar',
+  addItem() {
+    this.editingItem.set(null);
+    this.inventoryForm.reset({
       unit: 'kg',
-      price: 0
+      quantity: 0
     });
     this.isFormVisible.set(true);
   }
 
-  editIngredient(ingredient: Ingredient) {
-    this.editingIngredient.set(ingredient);
-
-    // Format date to 'yyyy-MM-dd' for the date input
-    const ingredientForForm = {
-      ...ingredient,
-      expiryDate: ingredient.expiryDate ? formatDate(ingredient.expiryDate, 'yyyy-MM-dd', 'en-US') : ''
-    };
-
-    this.ingredientForm.patchValue(ingredientForForm);
+  editItem(item: InventoryItemDto) {
+    this.editingItem.set(item);
+    this.inventoryForm.patchValue({
+      id: item.id,
+      ingredientId: item.ingredientId,
+      quantity: item.quantity,
+      unit: item.unit,
+      location: item.location || ''
+    });
     this.isFormVisible.set(true);
   }
 
   closeForm() {
     this.isFormVisible.set(false);
-    this.editingIngredient.set(null);
+    this.editingItem.set(null);
   }
 
-  saveIngredient(ingredientData: any) {
-    if (this.ingredientForm.invalid) return;
+  saveItem() {
+    if (this.inventoryForm.invalid) return;
 
-    const data = {
-      ...ingredientData,
-      expiryDate: new Date(ingredientData.expiryDate),
-      price: Number(ingredientData.price)
+    const formData = this.inventoryForm.value;
+    const itemData: Partial<InventoryItemDto> = {
+      ingredientId: formData.ingredientId!,
+      quantity: formData.quantity!,
+      unit: formData.unit!,
+      location: formData.location!,
     };
 
-    const currentIngredient = this.editingIngredient();
-    if (currentIngredient) {
-      // Update existing ingredient
-      const updatedIngredient: Ingredient = {
-        ...currentIngredient,
-        ...data,
-      };
-      this.inventoryService.updateIngredient(updatedIngredient);
+    const currentItem = this.editingItem();
+    if (currentItem) {
+      const updatedItem: InventoryItemDto = {
+        ...currentItem,
+        ...itemData,
+      } as InventoryItemDto;
+      this.inventoryService.updateIngredient(updatedItem).subscribe(() => {
+        this.inventoryService.loadIngredients();
+        this.closeForm();
+      });
     } else {
-      // Add new ingredient
-      const { id, ...newIngredientData } = data;
-      this.inventoryService.addIngredient(newIngredientData as Omit<Ingredient, 'id'>);
+      this.inventoryService.addIngredient(itemData).subscribe(() => {
+        this.inventoryService.loadIngredients();
+        this.closeForm();
+      });
     }
-    this.closeForm();
   }
 
-  deleteIngredient(id: string) {
-    if (confirm('¿Estás seguro de que quieres eliminar este ingrediente?')) {
-      this.inventoryService.deleteIngredient(id);
+  deleteItem(id: string) {
+    if (confirm('¿Estás seguro de que quieres eliminar este item del inventario?')) {
+      this.inventoryService.deleteIngredient(id).subscribe(() => {
+        this.inventoryService.loadIngredients();
+      });
     }
   }
 }

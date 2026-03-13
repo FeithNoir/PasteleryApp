@@ -1,45 +1,52 @@
-# PasteleryApp 🍰
+# PasteleriaApp - Sistema de Gestión de Panadería 🥐
 
-A modern, high-performance Angular application for managing a bakery shop. Built with latest Angular features and a sleek Neobrutalist design.
+Aplicación moderna para la gestión de inventario, recetas y ventas de una pastelería artesanal, construida con Angular e integrada con un backend .NET 8.
 
-## 🚀 Technologies
+## 🚀 Características
 
-- **Framework**: Angular 21
-- **State Management**: Angular Signals
-- **Styling**: Vanilla CSS (Neobrutalist Aesthetic)
-- **Icons & UI**: SweetAlert2
-- **Language**: TypeScript
+- **Catálogo de Productos**: Explora nuestra variedad de panes y pasteles consumidos desde la API de Recetas.
+- **Gestión de Inventario**: Control detallado de items de inventario y base de ingredientes conectado al backend.
+- **Sistema de Recetas**: Listado de recetas de la casa con cálculo de costos y precios sugeridos.
+- **Carrito de Compras**: Selección de productos y simulador de pago.
+- **Autenticación**: Registro e inicio de sesión mediante JWT con el módulo de Auth de la API.
 
-## 🏗️ Architecture
+## 🛠️ Tecnologías
 
-The project follows a modular and scalable directory structure:
+- **Angular 19** (Signals, Standalone Components, Control Flow)
+- **TypeScript**
+- **HttpClient**: Comunicación con API REST.
+- **CSS3** (Diseño Neobrutalista)
+- **Reactive Forms**
 
-### `/core`
-The backbone of the application.
-- **Services**: Business logic and data management (Inventory, Cakes, Cart, Auth).
-- **Interfaces**: TypeScript definitions for consistent data models.
-- **Guards**: Route protection and navigation logic.
-- **Data**: Static mock data and configuration.
+## 📂 Estructura del Proyecto
 
-### `/pages`
-Feature-based page components.
-- **Home**: Product catalog and featured cakes.
-- **Inventory**: Management of ingredients and stock.
-- **Recipes**: Detailed recipes for production.
-- **Profile & Auth**: User management and authentication.
+- **Components**: Componentes reutilizables (Card, Cart, Header, etc).
+- **Pages**: Vistas principales de la aplicación (Home, Inventory, Recipes).
+- **Services**: Comunicación con la API (RecipeService, InventoryService, AuthService, CartService).
+- **Interfaces**: Modelos de datos alineados con los DTOs del Backend.
 
-### `/shared`
-Reusable UI components across the app.
-- **Card**: Standardized presentation for cakes.
-- **Modal**: Flexible popup system.
-- **Layout**: Main structure including sidebar and header.
+## 🔌 Integración con Backend
 
-## ✨ Future Roadmap
+La aplicación está configurada para conectarse a una API en `http://localhost:5000/api`.
+Los módulos principales integrados son:
+- **Recipe Module**: Gestión de recetas y sus ingredientes.
+- **Inventory Item Module**: Control de stock.
+- **Auth Module**: Autenticación y roles de usuario (Admin, User, Visitor).
 
-- **Backend Integration**: Replace mock services with a real RESTful API.
-- **Authentication**: JWT-based login and role-based access control.
-- **Dashboard**: Advanced analytics for sales and inventory optimization.
-- **PWA Support**: Offline capabilities for warehouse management.
+## 🎨 Estilo Visual
+
+La aplicación utiliza un estilo **Neobrutalista** caracterizado por:
+- Sombras negras pronunciadas.
+- Bordes gruesos y definidos.
+- Colores vibrantes y contrastantes.
+- Tipografía clara y legible.
+
+## 🚀 Instalación y Uso
+
+1. Instalar dependencias: `npm install`
+2. Iniciar servidor: `npm start`
+3. Asegurarse de tener la API de backend ejecutándose en el puerto 5000.
+4. Abrir `http://localhost:4200`
 
 ---
-Developed with ❤️ by the Bakery Team.
+Desarrollado con ❤️ para amantes de la buena repostería.

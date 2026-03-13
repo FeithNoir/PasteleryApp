@@ -27,11 +27,11 @@ private readonly authService = inject(AuthService);
     }
 
     login() {
-        this.router.navigate(['/login']);
+        this.router.navigate(['/home/login']);
     }
 
     logout() {
         this.authService.logout();
-        this.router.navigate(['/']);
+        this.router.navigate(['/home/main']);
     }
 }

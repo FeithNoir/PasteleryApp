@@ -1,14 +1,16 @@
 <div class="card-content">
-  <a [routerLink]="['/cake', cake().id]">
-    <img [ngSrc]="cake().imageUrl" [alt]="cake().name" width="1024" height="1024" [priority]="cake().id < 4">
-    <h3>{{ cake().name }}</h3>
+  <a [routerLink]="['/home/main', { id: recipe().id }]">
+    @if (recipe().imageUrl) {
+      <img [ngSrc]="recipe().imageUrl!" [alt]="recipe().name" width="1024" height="1024" priority="true">
+    }
+    <h3>{{ recipe().name }}</h3>
   </a>
   <div class="card-footer">
-    <p>{{ cake().price | currency:'USD' }}</p>
+    <p>{{ recipe().suggestedPrice | currency:'USD' }}</p>
     <button (click)="addToCart()">Añadir al carrito</button>
   </div>
 </div>
 
 @if (showModal()) {
-<shared-modal [cake]="cake()" (close)="closeModal()" />
+<shared-modal [recipe]="recipe()" (close)="closeModal()" />
 }

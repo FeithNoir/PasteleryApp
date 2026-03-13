@@ -22,10 +22,13 @@ export class Auth {
 
   login() {
     if (this.loginForm.valid) {
-      const success = this.authService.login(this.loginForm.value) as unknown as boolean;
-      if (success) {
-        this.router.navigate(['/profile']);
-      }
+      this.authService.login(this.loginForm.value).subscribe(response => {
+        if (response.isSuccess) {
+          this.router.navigate(['/profile']);
+        } else {
+          alert(response.message || 'Error al iniciar sesión');
+        }
+      });
     }
   }
 }

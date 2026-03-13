@@ -1,7 +1,7 @@
 import { CommonModule, NgOptimizedImage } from '@angular/common';
 import { Component, inject, input, signal } from '@angular/core';
 import { RouterModule } from '@angular/router';
-import { Cake } from '@core/interfaces/cake.interface';
+import { ListRecipeDto } from '@core/interfaces/recipe.interface';
 import { CartService } from '@core/services/cart.service';
 import Modal from '@shared/modal/modal';
 
@@ -12,12 +12,12 @@ import Modal from '@shared/modal/modal';
   styleUrl: './card.css',
 })
 export class Card {
-  cake = input.required<Cake>();
+  recipe = input.required<ListRecipeDto>();
   private cartService = inject(CartService);
   showModal = signal(false);
 
   addToCart() {
-    this.cartService.addToCart(this.cake());
+    this.cartService.addToCart(this.recipe());
     this.showModal.set(true);
   }
 

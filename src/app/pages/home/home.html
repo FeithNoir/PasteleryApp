@@ -1,19 +1,22 @@
-<div class="cake-list-container">
-  <div class="cake-list-grid">
-    @for (cake of cakes(); track cake.id) {
-    <shared-card [cake]="cake" />
+<div class="recipe-list-container">
+  <div class="recipe-list-grid">
+    @for (recipe of recipes(); track recipe.id) {
+    <shared-card [recipe]="recipe" />
     }
   </div>
 </div>
 
-@if (cake()) {
-  <div class="cake-detail-container">
-    <img [src]="cake()?.imageUrl" [alt]="cake()?.name">
-    <div class="cake-details">
-      <h2>{{ cake()?.name }}</h2>
-      <p>{{ cake()?.description }}</p>
+@if (recipe()) {
+  <div class="recipe-detail-container">
+    @if (recipe()?.imageUrl) {
+      <img [src]="recipe()?.imageUrl" [alt]="recipe()?.name">
+    }
+    <div class="recipe-details">
+      <h2>{{ recipe()?.name }}</h2>
+      <p>{{ recipe()?.description }}</p>
+      <p>Precio sugerido: {{ recipe()?.suggestedPrice | currency:'USD' }}</p>
     </div>
   </div>
-} @else {
-  <p>Pastel no encontrado.</p>
+} @else if (!loading()) {
+  <p>Receta no encontrada.</p>
 }

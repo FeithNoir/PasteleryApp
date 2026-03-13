@@ -1,8 +1,8 @@
 import { Injectable, signal, computed } from '@angular/core';
-import { Cake } from '@core/interfaces/cake.interface';
+import { ListRecipeDto, RecipeDto } from '../interfaces/recipe.interface';
 
 export interface CartItem {
-  cake: Cake;
+  recipe: RecipeDto | ListRecipeDto;
   quantity: number;
 }
 
@@ -13,29 +13,29 @@ export class CartService {
   cart = signal<CartItem[]>([]);
 
   totalItems = computed(() => this.cart().reduce((acc, item) => acc + item.quantity, 0));
-  totalPrice = computed(() => this.cart().reduce((acc, item) => acc + item.cake.price * item.quantity, 0));
+  totalPrice = computed(() => this.cart().reduce((acc, item) => acc + (item.recipe.suggestedPrice || 0) * item.quantity, 0));
 
-  addToCart(cake: Cake) {
-    const existingItem = this.cart().find(item => item.cake.id === cake.id);
+  addToCart(recipe: RecipeDto | ListRecipeDto) {
+    const existingItem = this.cart().find(item => item.recipe.id === recipe.id);
     if (existingItem) {
       this.cart.update(cart =>
         cart.map(item =>
-          item.cake.id === cake.id ? { ...item, quantity: item.quantity + 1 } : item
+          item.recipe.id === recipe.id ? { ...item, quantity: item.quantity + 1 } : item
         )
       );
     } else {
-      this.cart.update(cart => [...cart, { cake, quantity: 1 }]);
+      this.cart.update(cart => [...cart, { recipe, quantity: 1 }]);
     }
   }
 
-  removeFromCart(cakeId: number) {
-    this.cart.update(cart => cart.filter(item => item.cake.id !== cakeId));
+  removeFromCart(recipeId: string) {
+    this.cart.update(cart => cart.filter(item => item.recipe.id !== recipeId));
   }
 
-  updateQuantity(cakeId: number, quantity: number) {
+  updateQuantity(recipeId: string, quantity: number) {
     this.cart.update(cart =>
       cart.map(item =>
-        item.cake.id === cakeId ? { ...item, quantity } : item
+        item.recipe.id === recipeId ? { ...item, quantity } : item
       ).filter(item => item.quantity > 0)
     );
   }

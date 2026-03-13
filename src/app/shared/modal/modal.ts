@@ -1,6 +1,6 @@
 import { Component, inject, input, output } from '@angular/core';
 import { Router } from '@angular/router';
-import { Cake } from '@core/interfaces/cake.interface';
+import { ListRecipeDto } from '@core/interfaces/recipe.interface';
 
 @Component({
     selector: 'shared-modal',
@@ -9,7 +9,7 @@ import { Cake } from '@core/interfaces/cake.interface';
 })
 export default class Modal {
     private router = inject(Router);
-    public cake = input.required<Cake>();
+    public recipe = input.required<ListRecipeDto>();
     public close = output<void>();
 
     continueShopping() {
@@ -18,6 +18,6 @@ export default class Modal {
 
     goToCheckout() {
         this.close.emit();
-        this.router.navigate(['/payment']);
+        this.router.navigate(['/home/payment']);
     }
 }

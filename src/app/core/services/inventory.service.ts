@@ -1,57 +1,20 @@
-import { Injectable, computed, signal } from '@angular/core';
-import { of } from 'rxjs';
-import { delay } from 'rxjs/operators';
-import { Ingredient } from '@core/interfaces/ingredient.interface';
-
-// Mock data for ingredients
-const MOCK_INGREDIENTS: Ingredient[] = [
-  {
-    id: 'HRN-001',
-    name: 'Harina de Trigo',
-    brand: 'La Espiga de Oro',
-    unit: 'kg',
-    price: 1.5,
-    status: 'sin empezar',
-    expiryDate: new Date('2024-12-31'),
-  },
-  {
-    id: 'AZC-002',
-    name: 'Azúcar Blanca Refinada',
-    brand: 'Dulce Caña',
-    unit: 'kg',
-    price: 2.1,
-    status: 'abierto',
-    expiryDate: new Date('2025-06-30'),
-    openedDate: new Date('2024-05-10'),
-    notes: 'Almacenar en lugar seco.',
-  },
-  {
-    id: 'CHC-003',
-    name: 'Chocolate Amargo 70%',
-    brand: 'Cacao Real',
-    unit: 'g',
-    price: 4.5,
-    status: 'agotado',
-    expiryDate: new Date('2024-08-20'),
-    openedDate: new Date('2024-04-01'),
-  },
-  {
-    id: 'LCH-004',
-    name: 'Leche Entera',
-    brand: 'Vaca Feliz',
-    unit: 'l',
-    price: 0.9,
-    status: 'abierto',
-    expiryDate: new Date('2024-05-25'),
-    openedDate: new Date('2024-05-20'),
-  },
-];
+import { Injectable, inject, signal } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Observable, map, of } from 'rxjs';
+import { delay, finalize } from 'rxjs/operators';
+import { ApiResponse } from '../interfaces/api-response.interface';
+import { InventoryItemDto, IngredientDto } from '../interfaces/inventory-item.interface';
+import { INVENTORY_DATA } from '../data/app-data';
 
 @Injectable({
   providedIn: 'root',
 })
 export class InventoryService {
-  private readonly _ingredients = signal<Ingredient[]>([]);
+  private http = inject(HttpClient);
+  private apiUrl = 'http://localhost:5000/api/InventoryItem';
+  private ingredientApiUrl = 'http://localhost:5000/api/Ingredient';
+
+  private readonly _ingredients = signal<InventoryItemDto[]>([]);
   private readonly _loading = signal<boolean>(false);
 
   public readonly ingredients = this._ingredients.asReadonly();
@@ -63,32 +26,58 @@ export class InventoryService {
 
   loadIngredients() {
     this._loading.set(true);
-    of(MOCK_INGREDIENTS)
-      .pipe(delay(1000)) // Simulate network latency
-      .subscribe(ingredients => {
-        this._ingredients.set(ingredients);
-        this._loading.set(false);
+
+    // TEMPORAL: Mock data
+    of(INVENTORY_DATA).pipe(
+      delay(800),
+      finalize(() => this._loading.set(false))
+    ).subscribe(items => {
+      this._ingredients.set(items);
+    });
+
+    /* BACKEND INTEGRATION:
+    this.http.get<ApiResponse<InventoryItemDto[]>>(this.apiUrl)
+      .pipe(
+        map(response => response.data || []),
+        finalize(() => this._loading.set(false))
+      ).subscribe(items => {
+        this._ingredients.set(items);
       });
+    */
   }
 
-  addIngredient(ingredient: Omit<Ingredient, 'id'>) {
-    const newIngredient: Ingredient = {
-      ...ingredient,
-      id: `ING-${Date.now().toString().slice(-5)}`,
-    };
-    this._ingredients.update(current => [...current, newIngredient]);
-    return of(newIngredient).pipe(delay(300)); // Simulate async operation
+  addIngredient(item: Partial<InventoryItemDto>): Observable<InventoryItemDto | null> {
+    // TEMPORAL: Mock data
+    const newItem: InventoryItemDto = {
+      ...item,
+      id: `mock-${Date.now()}`,
+      lastUpdated: new Date().toISOString()
+    } as InventoryItemDto;
+    return of(newItem).pipe(delay(500));
+
+    /* BACKEND INTEGRATION:
+    return this.http.post<ApiResponse<InventoryItemDto>>(this.apiUrl, item)
+      .pipe(map(response => response.data));
+    */
   }
 
-  updateIngredient(updated: Ingredient) {
-    this._ingredients.update(current =>
-      current.map(ing => (ing.id === updated.id ? updated : ing))
-    );
-    return of(updated).pipe(delay(300));
+  updateIngredient(updated: InventoryItemDto): Observable<InventoryItemDto | null> {
+    // TEMPORAL: Mock data
+    return of(updated).pipe(delay(500));
+
+    /* BACKEND INTEGRATION:
+    return this.http.put<ApiResponse<InventoryItemDto>>(`${this.apiUrl}/${updated.id}`, updated)
+      .pipe(map(response => response.data));
+    */
   }
 
-  deleteIngredient(id: string) {
-    this._ingredients.update(current => current.filter(ing => ing.id !== id));
-    return of({ success: true }).pipe(delay(300));
+  deleteIngredient(id: string): Observable<boolean> {
+    // TEMPORAL: Mock data
+    return of(true).pipe(delay(500));
+
+    /* BACKEND INTEGRATION:
+    return this.http.delete<ApiResponse<any>>(`${this.apiUrl}/${id}`)
+      .pipe(map(response => response.isSuccess));
+    */
   }
 }

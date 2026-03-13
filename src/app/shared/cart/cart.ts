@@ -14,14 +14,14 @@ export class Cart {
   cartItems = this.cartService.cart;
   totalPrice = this.cartService.totalPrice;
 
-  removeFromCart(cakeId: number) {
-    this.cartService.removeFromCart(cakeId);
+  removeFromCart(recipeId: string) {
+    this.cartService.removeFromCart(recipeId);
   }
 
-  updateQuantity(cakeId: number, event: Event) {
+  updateQuantity(recipeId: string, event: Event) {
     const input = event.target as HTMLInputElement;
     const quantity = parseInt(input.value, 10);
-    this.cartService.updateQuantity(cakeId, quantity);
+    this.cartService.updateQuantity(recipeId, quantity);
   }
 
   clearCart() {

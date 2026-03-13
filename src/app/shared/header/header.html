@@ -6,25 +6,25 @@
       <span></span>
     </button>
     <div class="logo">
-      <a routerLink="/">PastelApp</a>
+      <a routerLink="/home/main">PastelApp</a>
     </div>
     <nav class="main-nav hide-mobile">
-      <a routerLink="/">Inicio</a>
-      <a routerLink="/recipes">Recetas</a>
-      <a routerLink="/about">Acerca de nosotros</a>
+      <a routerLink="/home/main">Inicio</a>
+      <a routerLink="/home/recipes">Recetas</a>
+      <a routerLink="/home/about">Acerca de nosotros</a>
       @if (currentUser()) {
-      <a routerLink="/inventory">Inventario</a>
+      <a routerLink="/home/inventory">Inventario</a>
       }
     </nav>
   </div>
 
   <div class="header-right">
     <div class="nav-actions">
-      <a routerLink="/cart" class="cart-link">
+      <a routerLink="/home/cart" class="cart-link">
         <span>Carrito</span>
       </a>
       @if (currentUser()) {
-      <a routerLink="/profile" class="hide-mobile">Perfil</a>
+      <a routerLink="/home/profile" class="hide-mobile">Perfil</a>
       <a (click)="logout.emit()" class="auth-btn">Cerrar sesión</a>
       } @else {
       <a (click)="login.emit()" class="auth-btn">Login</a>

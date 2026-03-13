@@ -13,6 +13,6 @@ export class Payment {
 
   processPayment() {
     alert('¡Gracias por su compra! Su pedido está siendo procesado.');
-    this.router.navigate(['/']);
+    this.router.navigate(['/home/main']);
   }
 }

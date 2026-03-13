@@ -1,5 +1,5 @@
 import { Component, inject } from '@angular/core';
-import { CakeService } from '@core/services/cake.service';
+import { RecipeService } from '@core/services/recipe.service';
 import { Card } from "@shared/card/card";
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
@@ -14,19 +14,22 @@ import { map, switchMap } from 'rxjs';
 })
 export class Home {
   private route = inject(ActivatedRoute);
-  private cakeService = inject(CakeService);
+  private recipeService = inject(RecipeService);
 
-  cakes = this.cakeService.cakes;
-  loading = this.cakeService.loading;
+  recipes = this.recipeService.recipes;
+  loading = this.recipeService.loading;
 
   constructor() {
-    this.cakeService.getCakes();
+    this.recipeService.getRecipes();
   }
 
-  public cake = toSignal(
+  public recipe = toSignal(
     this.route.paramMap.pipe(
-      map(params => Number(params.get('id'))),
-      switchMap(id => this.cakeService.getCakeById(id))
+      map(params => params.get('id') || ''),
+      switchMap(id => {
+        if (!id) return [null];
+        return this.recipeService.getRecipeById(id);
+      })
     )
   );
 }

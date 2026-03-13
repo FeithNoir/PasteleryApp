@@ -1,9 +1,13 @@
 import { Injectable, signal, inject } from '@angular/core';
 import { Router } from '@angular/router';
+import { HttpClient } from '@angular/common/http';
+import { Observable, tap, map, of, delay } from 'rxjs';
+import { ApiResponse } from '../interfaces/api-response.interface';
 
 export interface User {
   name: string;
   email: string;
+  token?: string;
 }
 
 @Injectable({
@@ -11,6 +15,9 @@ export interface User {
 })
 export class AuthService {
   private router = inject(Router);
+  private http = inject(HttpClient);
+  private apiUrl = 'http://localhost:5000/api/Authentication';
+
   public currentUser = signal<User | null>(null);
   public isAuthenticated = signal(false);
 
@@ -22,24 +29,65 @@ export class AuthService {
     }
   }
 
-  login(credentials: any): boolean {
-    if (credentials.email && credentials.password) {
-      const mockUser: User = {
+  login(credentials: any): Observable<ApiResponse<User>> {
+    // TEMPORAL: Mock data
+    const mockResponse: ApiResponse<User> = {
+      data: {
         name: credentials.email.split('@')[0],
-        email: credentials.email
-      };
-      localStorage.setItem('user', JSON.stringify(mockUser));
-      this.currentUser.set(mockUser);
-      this.isAuthenticated.set(true);
-      return true;
-    }
-    return false;
+        email: credentials.email,
+        token: 'mock-jwt-token'
+      },
+      message: 'Success',
+      errors: null,
+      isSuccess: true,
+      statusCode: 200
+    };
+
+    return of(mockResponse).pipe(
+      delay(800),
+      tap(response => {
+        if (response.isSuccess && response.data) {
+          localStorage.setItem('user', JSON.stringify(response.data));
+          this.currentUser.set(response.data);
+          this.isAuthenticated.set(true);
+        }
+      })
+    );
+
+    /* BACKEND INTEGRATION:
+    return this.http.post<ApiResponse<User>>(`${this.apiUrl}/Login`, credentials)
+      .pipe(
+        tap(response => {
+          if (response.isSuccess && response.data) {
+            localStorage.setItem('user', JSON.stringify(response.data));
+            this.currentUser.set(response.data);
+            this.isAuthenticated.set(true);
+          }
+        })
+      );
+    */
+  }
+
+  register(userData: any): Observable<ApiResponse<any>> {
+    // TEMPORAL: Mock data
+    const mockResponse: ApiResponse<any> = {
+      data: null,
+      message: 'User registered successfully',
+      errors: null,
+      isSuccess: true,
+      statusCode: 200
+    };
+    return of(mockResponse).pipe(delay(800));
+
+    /* BACKEND INTEGRATION:
+    return this.http.post<ApiResponse<any>>(`${this.apiUrl}/Register`, userData);
+    */
   }
 
   logout() {
     localStorage.removeItem('user');
     this.currentUser.set(null);
     this.isAuthenticated.set(false);
-    this.router.navigate(['/login']);
+    this.router.navigate(['/home/login']);
   }
 }
